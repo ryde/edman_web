@@ -1,0 +1,10 @@
+[DB]
+port = 27017
+host = 127.0.0.1
+db = testing_db
+user = test
+password = test
+
+admin_user = admin
+admin_password = admin
+admin_db = admin

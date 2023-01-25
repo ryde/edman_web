@@ -1,0 +1,53 @@
+name: edman_web Unittest
+
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  edman_unittest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mongodb-version: [ '6.0' ]
+
+    steps:
+      - name: setup
+        uses: actions/checkout@v3
+
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          check-latest: true
+      - run: python -m venv venv
+      - run:  source ./venv/bin/activate
+      - run:  pip install -U pip setuptools
+      - run:  pip install sphinx pytest
+      - run:  pip install .
+      - run:  cp ./tests/ini/test_db.ini.sample ./tests/ini/test_db.ini
+
+      - name: setup DB
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-username: admin
+          mongodb-password: admin
+          mongodb-db: admin
+
+      - name: run unittest
+        run: |
+          cd ./tests
+          pytest
+
+      - name: API doc output and push gh-pages
+        run: |
+          mkdir ./api_docs
+          sphinx-apidoc -F -o ./api_docs ./edman_web/
+      - run: |
+          cd ./api_docs
+          make html
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./api_docs/_build/html

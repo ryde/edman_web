@@ -133,7 +133,7 @@ class TestWebManager(TestCase):
 
         all_docs = self.search_manager.get_documents(2, doc_col, doc_id,
                                              parent_depth=0, child_depth=0)
-        print(f'{all_docs=}')
+        # print(f'{all_docs=}')
         expected = {
             parent_col: {
                 'name': 'parent',

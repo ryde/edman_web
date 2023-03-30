@@ -10,7 +10,7 @@ Requirement
 -----------
 -   pymongo
 -   Flask
-and MongoDB.
+-   and MongoDB.
 
 Modules Usage
 -------------

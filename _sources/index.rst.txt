@@ -1,5 +1,5 @@
 .. edman_web documentation master file, created by
-   sphinx-quickstart on Thu Mar 30 03:08:26 2023.
+   sphinx-quickstart on Thu Mar 30 03:32:30 2023.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
@@ -10,7 +10,7 @@ Welcome to edman_web's documentation!
    :maxdepth: 4
    :caption: Contents:
 
-   search_manager
+   edman_web
 
 
 Indices and tables

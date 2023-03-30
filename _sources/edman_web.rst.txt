@@ -1,0 +1,21 @@
+edman\_web package
+==================
+
+Submodules
+----------
+
+edman\_web.search\_manager module
+---------------------------------
+
+.. automodule:: edman_web.search_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: edman_web
+   :members:
+   :undoc-members:
+   :show-inheritance:

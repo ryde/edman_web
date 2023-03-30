@@ -6,7 +6,7 @@ from bson import ObjectId, DBRef
 from edman import Config, DB
 from edman_web.search_manager import SearchManager
 
-class TestWebManager(TestCase):
+class TestSearchManager(TestCase):
     db_server_connect = False
     test_ini = []
     client = None

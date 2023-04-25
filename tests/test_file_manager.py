@@ -3,6 +3,7 @@ from pathlib import Path
 import tempfile
 import base64
 import os
+import gzip
 from io import BytesIO
 from unittest import TestCase
 from PIL import Image
@@ -268,13 +269,13 @@ class TestSearchManager(TestCase):
             actual = target_doc[Config.file]
             self.assertListEqual(expected, actual)
 
-    def test_upload(self):
+    def test_web_upload(self):
         if not self.db_server_connect:
             return
 
         with tempfile.TemporaryDirectory() as tmp_dl_dir:
             p = Path(tmp_dl_dir)
-            for filename in  self.make_txt_files(p, 'file_dl_list'):
+            for filename in self.make_txt_files(p, 'file_dl_list'):
                 with filename.open('rb') as f:
                     content = f.read()
                     content_name = os.path.basename(f.name)
@@ -320,10 +321,10 @@ class TestSearchManager(TestCase):
             # self.assertEquals(t, content)
 
             # 実行
-            self.file_manager.upload(st, doc_col, doc_id)
+            self.file_manager.web_upload(doc_col, doc_id, st)
 
             # アップロードしたデータを取得する
-            d = self.testdb[doc_col].find_one({'_id':doc_id})
+            d = self.testdb[doc_col].find_one({'_id': doc_id})
             upload_file_oid = d[Config.file]
             fs = gridfs.GridFS(self.testdb)
             a = fs.get(upload_file_oid[0])
@@ -331,4 +332,40 @@ class TestSearchManager(TestCase):
             # テスト
             actual = a.read()
             expected = content
-            self.assertEquals(expected, actual)
+            self.assertEqual(expected, actual)
+
+    def test_web_grid_in(self):
+
+        if not self.db_server_connect:
+            return
+
+        # 正常系
+        with tempfile.TemporaryDirectory() as tmp_dl_dir:
+            files = self.make_txt_files(tmp_dl_dir, 'web_grid_in', qty=2)
+
+            # ファイルが同一か否か
+            with files[0].open('rb') as f:
+                content = f.read()
+                st = FileStorage(stream=BytesIO(content),
+                                 filename=f.name)
+            self.fs = gridfs.GridFS(self.testdb)
+            inserted = self.file_manager.web_grid_in(st, compress=False)
+            a = self.fs.get(inserted[0])
+            actual = a.read().decode()
+            expected = content.decode()
+            self.assertEqual(expected, actual)
+
+            # 圧縮が効いているか否か
+            with files[1].open('rb') as f:
+                content = f.read()
+                st = FileStorage(stream=BytesIO(content),
+                                 filename=f.name)
+            inserted = self.file_manager.web_grid_in(st, compress=True)
+            b = self.fs.get(inserted[0])
+            if b.compress == 'gzip':
+                actual = gzip.decompress(b.read()).decode()
+            else:  # 現状compress指定は"gzip"かNoneのみ
+                actual = None
+            self.assertIsNotNone(b.compress)
+            expected = content.decode()
+            self.assertEqual(expected, actual)

@@ -1,6 +1,8 @@
 import os
 import base64
-from typing import Union, List, Tuple
+from pathlib import Path
+import gzip
+from typing import Union, List, Tuple, Any
 from io import BytesIO
 from werkzeug.datastructures import FileStorage
 from bson import ObjectId
@@ -15,14 +17,15 @@ class FileManager(File):
     def __init__(self, db=None):
         super().__init__(db)
 
-    def upload(self, up_file: FileStorage, collection: str,
-               oid: Union[str, ObjectId]) -> None:
+    def web_upload(self, collection: str, oid: Union[str, ObjectId],
+                   up_file: FileStorage, compress=False) -> None:
         """
         ファイルアップロード処理
 
-        :param FileStorage up_file:
         :param str collection:
         :param str or ObjectId oid:
+        :param FileStorage up_file:
+        :param bool compress:
         :return:
         """
         oid = Utils.conv_objectid(oid)
@@ -31,30 +34,57 @@ class FileManager(File):
         if (doc := self.db[collection].find_one({'_id': oid})) is None:
             raise EdmanDbProcessError('対象のドキュメントが存在しません')
 
-        # gridfsにファイルを入れる
-        metadata = {'filename': up_file.filename}
         try:
-            st = BytesIO(up_file.stream.read())
-            file_oid = self.fs.put(st, **metadata)
-        except GridFSError:
+            # gridfsにファイルを入れる
+            inserted_file_oids = self.web_grid_in(up_file, compress)
+        except EdmanDbProcessError as e:
+            raise e
+        else:  # ドキュメントの更新
+            try:
+                new_doc = self.file_list_attachment(doc, inserted_file_oids)
+                replace_result = self.db[collection].replace_one({'_id': oid},
+                                                                 new_doc)
+                if replace_result.modified_count != 1:
+                    # ドキュメントが更新されていない場合はgridfsからデータを削除する
+                    self.fs_delete(inserted_file_oids)
+                    raise EdmanDbProcessError('ドキュメントの更新ができませんでした.')
+            except Exception as e:
+                # 途中で例外が起きた場合、gridfsからデータを削除する
+                self.fs_delete(inserted_file_oids)
+                raise EdmanDbProcessError(str(e))
+
+    def web_grid_in(self, file: FileStorage, compress: bool) -> list[Any]:
+        """
+        Gridfsへデータをアップロードし
+        compressに圧縮指定があればgzipで圧縮する
+
+        :param FileStorage file:
+        :param bool compress:
+        :return: inserted
+        :rtype: list
+        """
+        inserted = []
+
+        try:
+            f = file.stream.read()
+            if compress:
+                f = gzip.compress(f, compresslevel=self.comp_level)
+                compress_type = 'gzip'
+            else:
+                compress_type = None
+
+            metadata = {'filename': file.filename, 'compress': compress_type}
+
+        except OSError:
             raise EdmanDbProcessError('DBにファイルをアップロード出来ませんでした')
         except Exception:
             raise
 
-        # ドキュメントの更新
         try:
-            new_doc = self.file_list_attachment(doc, [file_oid])
-            replace_result = self.db[collection].replace_one({'_id': oid},
-                                                             new_doc)
-            if replace_result.modified_count != 1:
-                # ドキュメントが更新されていない場合はgridfsからデータを削除する
-                self.fs_delete([file_oid])
-                raise EdmanDbProcessError(
-                    'ドキュメントの更新ができませんでした.ファイルは削除されています')
-        except Exception:
-            # 途中で例外が起きた場合、gridfsからデータを削除する
-            self.fs_delete([file_oid])
-            raise EdmanDbProcessError('ドキュメントの更新ができませんでした.ファイルは削除されています')
+            inserted.append(self.fs.put(f, **metadata))
+        except GridFSError as e:
+            raise EdmanDbProcessError(e)
+        return inserted
 
     def file_delete(self, collection: str, oid: Union[str, ObjectId],
                     delete_list: List[str]):

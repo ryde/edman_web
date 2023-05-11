@@ -54,8 +54,7 @@ class FileManager(File):
 
     def web_grid_in(self, file: FileStorage, compress: bool) -> list[Any]:
         """
-        Gridfsへデータをアップロードし
-        compressに圧縮指定があればgzipで圧縮する
+        Gridfsへデータをアップロード
 
         :param FileStorage file:
         :param bool compress:
@@ -63,22 +62,19 @@ class FileManager(File):
         :rtype: list
         """
         inserted = []
-
         try:
             f = file.stream.read()
-            if compress:
-                f = gzip.compress(f, compresslevel=self.comp_level)
-                compress_type = 'gzip'
-            else:
-                compress_type = None
-
-            metadata = {'filename': file.filename, 'compress': compress_type}
-
+            # if compress:
+            #     f = gzip.compress(f, compresslevel=self.comp_level)
+            #     compress_type = 'gzip'
+            # else:
+            #     compress_type = None
+            # metadata = {'filename': file.filename, 'compress': compress_type}
+            metadata = {'filename': file.filename}
         except OSError:
             raise EdmanDbProcessError('DBにファイルをアップロード出来ませんでした')
         except Exception:
             raise
-
         try:
             inserted.append(self.fs.put(f, **metadata))
         except GridFSError as e:

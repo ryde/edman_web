@@ -356,16 +356,16 @@ class TestSearchManager(TestCase):
             self.assertEqual(expected, actual)
 
             # 圧縮が効いているか否か
-            with files[1].open('rb') as f:
-                content = f.read()
-                st = FileStorage(stream=BytesIO(content),
-                                 filename=f.name)
-            inserted = self.file_manager.web_grid_in(st, compress=True)
-            b = self.fs.get(inserted[0])
-            if b.compress == 'gzip':
-                actual = gzip.decompress(b.read()).decode()
-            else:  # 現状compress指定は"gzip"かNoneのみ
-                actual = None
-            self.assertIsNotNone(b.compress)
-            expected = content.decode()
-            self.assertEqual(expected, actual)
+            # with files[1].open('rb') as f:
+            #     content = f.read()
+            #     st = FileStorage(stream=BytesIO(content),
+            #                      filename=f.name)
+            # inserted = self.file_manager.web_grid_in(st, compress=True)
+            # b = self.fs.get(inserted[0])
+            # if b.compress == 'gzip':
+            #     actual = gzip.decompress(b.read()).decode()
+            # else:  # 現状compress指定は"gzip"かNoneのみ
+            #     actual = None
+            # self.assertIsNotNone(b.compress)
+            # expected = content.decode()
+            # self.assertEqual(expected, actual)

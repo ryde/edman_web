@@ -23,7 +23,7 @@ dependencies = [
     "Werkzeug~=2.3.3",
     "Pillow~=9.5.0"
 ]
-version = "2023.5.11"
+version = "2023.5.12"
 
 [project.urls]
 "documentation" = "https://ryde.github.io/edman_web/"

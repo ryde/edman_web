@@ -5,8 +5,8 @@ cffi==1.15.1
 charset-normalizer==3.1.0
 cryptography==40.0.2
 dnspython==2.3.0
-docutils==0.19
-edman==2023.5.8
+docutils==0.20
+edman==2023.5.11
 idna==3.4
 importlib-metadata==6.6.0
 jaraco.classes==3.2.3
@@ -35,5 +35,5 @@ six==1.16.0
 twine==4.0.2
 urllib3==2.0.2
 webencodings==0.5.1
-Werkzeug==2.3.3
+Werkzeug==2.3.4
 zipp==3.15.0

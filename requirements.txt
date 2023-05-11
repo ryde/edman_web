@@ -1,4 +1,5 @@
 bleach==6.0.0
+build==0.10.0
 Cerberus==1.3.4
 certifi==2023.5.7
 cffi==1.15.1
@@ -6,7 +7,7 @@ charset-normalizer==3.1.0
 cryptography==40.0.2
 dnspython==2.3.0
 docutils==0.20
-edman==2023.5.11
+edman==2023.5.12
 idna==3.4
 importlib-metadata==6.6.0
 jaraco.classes==3.2.3
@@ -18,12 +19,14 @@ markdown-it-py==2.2.0
 MarkupSafe==2.1.2
 mdurl==0.1.2
 more-itertools==9.1.0
+packaging==23.1
 Pillow==9.5.0
 pkginfo==1.9.6
 pyasn1==0.5.0
 pycparser==2.21
 Pygments==2.15.1
 pymongo==4.3.3
+pyproject_hooks==1.0.0
 python-dateutil==2.8.2
 readme-renderer==37.3
 requests==2.30.0

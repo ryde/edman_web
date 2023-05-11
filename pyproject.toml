@@ -1,0 +1,37 @@
+[build-system]
+requires = ["wheel", "setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edman_web"
+description = "Sub-package of edman for web applications."
+authors = [
+    {name = "Masaki Ohno", email = "masakio@post.kek.jp"},
+]
+readme = "README.rst"
+requires-python = ">=3.11"
+license = {file = "LICENSE.txt"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Database :: Front-Ends",
+]
+dependencies = [
+    "pymongo~=4.3.3",
+    "edman~=2023.5.11",
+    "Werkzeug~=2.3.3",
+    "Pillow~=9.5.0"
+]
+version = "2023.5.11"
+
+[project.urls]
+"documentation" = "https://ryde.github.io/edman_web/"
+"repository" = "https://github.com/ryde/edman_web"
+
+[tool.setuptools.packages.find]
+exclude = ["tests"]
+
+[tool.pytest.ini_options]
+addopts = "-p no:cacheprovider"
+testpaths = ["tests"]

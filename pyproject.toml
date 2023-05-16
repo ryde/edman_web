@@ -19,11 +19,11 @@ classifiers = [
 ]
 dependencies = [
     "pymongo~=4.3.3",
-    "edman~=2023.5.12",
+    "edman~=2023.5.16.1",
     "Werkzeug~=2.3.3",
     "Pillow~=9.5.0"
 ]
-version = "2023.5.12"
+version = "2023.5.16"
 
 [project.urls]
 "documentation" = "https://ryde.github.io/edman_web/"

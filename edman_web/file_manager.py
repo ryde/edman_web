@@ -1,6 +1,7 @@
 import os
 import base64
-import gzip
+import gridfs
+import mimetypes
 from typing import Union, List, Tuple, Any
 from io import BytesIO
 from werkzeug.datastructures import FileStorage
@@ -64,12 +65,6 @@ class FileManager(File):
         inserted = []
         try:
             f = file.stream.read()
-            # if compress:
-            #     f = gzip.compress(f, compresslevel=self.comp_level)
-            #     compress_type = 'gzip'
-            # else:
-            #     compress_type = None
-            # metadata = {'filename': file.filename, 'compress': compress_type}
             metadata = {'filename': file.filename}
         except OSError:
             raise EdmanDbProcessError('DBにファイルをアップロード出来ませんでした')
@@ -80,6 +75,32 @@ class FileManager(File):
         except GridFSError as e:
             raise EdmanDbProcessError(e)
         return inserted
+
+    def file_download(self, oid: Union[ObjectId, str]) -> tuple[
+        gridfs.grid_file.GridOut, str, str]:
+        """
+        GridFsからファイルをダウンロードする
+
+        :param str or ObjectId oid:
+        :rtype: tuple
+        :return:
+        """
+        if not isinstance(oid, ObjectId):
+            if ObjectId.is_valid(oid):
+                oid = ObjectId(oid)
+            else:
+                raise ValueError('ObjectIdに合致しません')
+
+        # ファイル情報を取得
+        try:
+            content = self.fs.get(oid)
+        except gridfs.errors.NoFile:
+            raise ValueError('ファイルが存在しません')
+        except gridfs.errors.GridFSError:
+            raise
+        file_name = content.filename
+        mimetype = mimetypes.guess_type(file_name)[0]
+        return content, file_name, mimetype
 
     def file_delete(self, collection: str, oid: Union[str, ObjectId],
                     delete_list: List[str]):

@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import base64
 import os
-import gzip
+import mimetypes
 from io import BytesIO
 from unittest import TestCase
 from PIL import Image
@@ -369,3 +369,36 @@ class TestSearchManager(TestCase):
             # self.assertIsNotNone(b.compress)
             # expected = content.decode()
             # self.assertEqual(expected, actual)
+
+    def test_file_download(self):
+
+        if not self.db_server_connect:
+            return
+
+        # gridfsにファイルを入れる
+        with tempfile.TemporaryDirectory() as tmp_dl_dir:
+            # ファイルを作成
+            files = self.make_txt_files(tmp_dl_dir, 'file_download', qty=2)
+            # ファイルをgridfsに入れる
+            inserted_oids = []
+            self.fs = gridfs.GridFS(self.testdb)
+            expected = []
+            for file in files:
+                with file.open('rb') as f:
+                    content = f.read()
+                    metadata = {'filename': os.path.basename(f.name)}
+                    inserted_oids.append(self.fs.put(content, **metadata))
+                    # 比較用データ作成
+                    expected.append([os.path.basename(f.name), content.decode(), mimetypes.guess_type(f.name)[0]])
+
+            actual = []
+            # データをダウンロード
+            for oid in inserted_oids:
+                content, file_name, mimetype = self.file_manager.file_download(oid)
+                actual.append([file_name, content.read().decode() , mimetype])
+                # print(file_name, mimetype, content.read().decode())
+
+            # テスト
+            self.assertListEqual(expected, actual)
+            # print(expected)
+            # print(actual)

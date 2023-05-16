@@ -7,7 +7,7 @@ charset-normalizer==3.1.0
 cryptography==40.0.2
 dnspython==2.3.0
 docutils==0.20
-edman==2023.5.12
+edman==2023.5.16.1
 idna==3.4
 importlib-metadata==6.6.0
 jaraco.classes==3.2.3

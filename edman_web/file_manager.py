@@ -2,7 +2,7 @@ import os
 import base64
 import gridfs
 import mimetypes
-from typing import Union, List, Tuple, Any
+from typing import Union, List, Tuple, Any, Optional
 from io import BytesIO
 from werkzeug.datastructures import FileStorage
 from bson import ObjectId
@@ -77,7 +77,7 @@ class FileManager(File):
         return inserted
 
     def file_download(self, oid: Union[ObjectId, str]) -> tuple[
-        gridfs.grid_file.GridOut, str, str]:
+        gridfs.grid_file.GridOut, str, Optional[str]]:
         """
         GridFsからファイルをダウンロードする
 
@@ -158,7 +158,8 @@ class FileManager(File):
 
     @staticmethod
     def generate_thumbnail(content: bytes, ext: str,
-                           thumbnail_size: tuple, file_decode='utf-8') -> str:
+                           thumbnail_size: tuple[int, int],
+                           file_decode='utf-8') -> str:
         """
         サムネイル画像をbase64で作成
     
@@ -171,7 +172,7 @@ class FileManager(File):
         """
         try:
             img = PILImage.open(BytesIO(content))
-            img.thumbnail(thumbnail_size, PILImage.LANCZOS)
+            img.thumbnail(size=thumbnail_size, resample=PILImage.LANCZOS)
             thumbnail = BytesIO()
             # jpgという拡張子は利用できないので変換する
             img.save(thumbnail, 'jpeg' if ext == 'jpg' else ext)

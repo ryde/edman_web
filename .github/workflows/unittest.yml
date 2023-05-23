@@ -23,22 +23,26 @@ jobs:
       - run: python -m venv venv
       - run:  source ./venv/bin/activate
       - run:  pip install -U pip setuptools
-      - run:  pip install sphinx pytest
+      - run:  pip install sphinx pytest mypy
       - run:  pip install -r ./requirements.txt
       - run:  cp ./tests/ini/test_db.ini.sample ./tests/ini/test_db.ini
 
       - name: setup DB
-        uses: supercharge/mongodb-github-action@1.8.0
+        uses: supercharge/mongodb-github-action@1.9.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
           mongodb-username: admin
           mongodb-password: admin
           mongodb-db: admin
 
-      - name: run unittest
+      - name: run pytest
         run: |
           cd ./tests
           pytest
+
+      - name: run mypy
+        run: |
+          mypy ./edman_web
 
       - name: API doc output and push gh-pages
         run: |

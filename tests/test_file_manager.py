@@ -1,17 +1,20 @@
-import configparser
-from pathlib import Path
-import tempfile
 import base64
-import os
+import configparser
 import mimetypes
+import os
+import tempfile
 from io import BytesIO
+from pathlib import Path
 from unittest import TestCase
-from PIL import Image
-from pymongo import errors as py_errors, MongoClient
-from bson import ObjectId, DBRef
+
 import gridfs
+from bson import DBRef, ObjectId
+from edman import DB, Config
+from PIL import Image
+from pymongo import MongoClient
+from pymongo import errors as py_errors
 from werkzeug.datastructures import FileStorage
-from edman import Config, DB
+
 from edman_web.file_manager import FileManager
 
 

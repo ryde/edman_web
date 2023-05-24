@@ -1,7 +1,9 @@
 from typing import Union
+
 from bson import ObjectId
 from edman import Search
 from edman.json_manager import GetJsonStructure
+
 
 class SearchManager(Search):
     def __init__(self, db=None):

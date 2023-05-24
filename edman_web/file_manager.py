@@ -1,16 +1,17 @@
-import os
 import base64
-import gridfs
 import mimetypes
-from typing import Union, List, Tuple, Any, Optional
+import os
 from io import BytesIO
-from werkzeug.datastructures import FileStorage
+from typing import Any, List, Optional, Tuple, Union
+
+import gridfs
 from bson import ObjectId
-from PIL import Image as PILImage
-from gridfs.errors import GridFSError
-from edman import File, Config
-from edman.utils import Utils
+from edman import Config, File
 from edman.exceptions import EdmanDbProcessError, EdmanInternalError
+from edman.utils import Utils
+from gridfs.errors import GridFSError
+from PIL import Image as PILImage
+from werkzeug.datastructures import FileStorage
 
 
 class FileManager(File):

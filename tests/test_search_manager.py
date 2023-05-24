@@ -1,10 +1,14 @@
 import configparser
 from pathlib import Path
 from unittest import TestCase
-from pymongo import errors as py_errors, MongoClient
-from bson import ObjectId, DBRef
-from edman import Config, DB
+
+from bson import DBRef, ObjectId
+from edman import DB, Config
+from pymongo import MongoClient
+from pymongo import errors as py_errors
+
 from edman_web.search_manager import SearchManager
+
 
 class TestSearchManager(TestCase):
     db_server_connect = False

@@ -23,7 +23,7 @@ jobs:
       - run: python -m venv venv
       - run:  source ./venv/bin/activate
       - run:  pip install -U pip setuptools
-      - run:  pip install sphinx pytest mypy
+      - run:  pip install sphinx pytest mypy flake8
       - run:  pip install -r ./requirements.txt
       - run:  cp ./tests/ini/test_db.ini.sample ./tests/ini/test_db.ini
 
@@ -43,6 +43,10 @@ jobs:
       - name: run mypy
         run: |
           mypy ./edman_web
+
+      - name: run flake8
+        run: |
+          flake8 ./edman_web
 
       - name: API doc output and push gh-pages
         run: |

@@ -77,8 +77,8 @@ class FileManager(File):
             raise EdmanDbProcessError(e)
         return inserted
 
-    def file_download(self, oid: Union[ObjectId, str]) -> tuple[
-        gridfs.grid_file.GridOut, str, Optional[str]]:
+    def file_download(self, oid: Union[ObjectId, str]
+                      ) -> tuple[gridfs.grid_file.GridOut, str, Optional[str]]:
         """
         GridFsからファイルをダウンロードする
 
@@ -143,8 +143,8 @@ class FileManager(File):
                 raise
 
     @staticmethod
-    def extract_thumb_list(files: list, thumbnail_suffix: list) -> List[
-        Tuple[ObjectId, str]]:
+    def extract_thumb_list(files: list, thumbnail_suffix: list
+                           ) -> List[Tuple[ObjectId, str]]:
         """
         サムネ作成対象のリストを作成する
 
@@ -153,8 +153,8 @@ class FileManager(File):
         :return:
         :rtype: list
         """
-        l = [os.path.splitext(i[1])[1][1:] for i in files]
-        return [(files[idx][0], ext) for idx, ext in enumerate(l) if
+        j = [os.path.splitext(i[1])[1][1:] for i in files]
+        return [(files[idx][0], ext) for idx, ext in enumerate(j) if
                 ext in thumbnail_suffix]
 
     @staticmethod
@@ -163,7 +163,7 @@ class FileManager(File):
                            file_decode='utf-8') -> str:
         """
         サムネイル画像をbase64で作成
-    
+
         :param bytes content:
         :param str ext:
         :param tuple thumbnail_size:

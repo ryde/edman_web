@@ -12,7 +12,7 @@ from edman_web.search_manager import SearchManager
 
 class TestSearchManager(TestCase):
     db_server_connect = False
-    test_ini = []
+    test_ini: dict = {}
     client = None
 
     @classmethod
@@ -134,9 +134,9 @@ class TestSearchManager(TestCase):
             insert_result = self.testdb[i['col']].insert_one(i['doc'])
             result.update({i['col']: insert_result.inserted_id})
 
-
         all_docs = self.search_manager.get_documents(2, doc_col, doc_id,
-                                             parent_depth=0, child_depth=0)
+                                                     parent_depth=0,
+                                                     child_depth=0)
         expected = {
             parent_col: {
                 'name': 'parent',

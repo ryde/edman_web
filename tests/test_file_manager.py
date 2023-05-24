@@ -20,7 +20,7 @@ from edman_web.file_manager import FileManager
 
 class TestSearchManager(TestCase):
     db_server_connect = False
-    test_ini = []
+    test_ini: dict = {}
     client = None
 
     @classmethod
@@ -157,7 +157,7 @@ class TestSearchManager(TestCase):
 
         with tempfile.TemporaryDirectory() as tmp_dl_dir:
 
-            ###### 全消しの場合 ######
+            # 全消しの場合
             # (添付ファイルが単数なので_ed_attachmentキーが消える)
 
             # ファイル読み込み、ファイルをgridfsに入れる
@@ -216,7 +216,7 @@ class TestSearchManager(TestCase):
             # 全消しなので_ed_attachmentキーは存在しない
             self.assertNotIn(Config.file, target_doc)
 
-            ###### 複数ファイル中の削除 ######
+            # 複数ファイル中の削除
 
             # ファイル読み込み、ファイルをgridfsに入れる
             files_oid = []
@@ -392,13 +392,16 @@ class TestSearchManager(TestCase):
                     metadata = {'filename': os.path.basename(f.name)}
                     inserted_oids.append(self.fs.put(content, **metadata))
                     # 比較用データ作成
-                    expected.append([os.path.basename(f.name), content.decode(), mimetypes.guess_type(f.name)[0]])
+                    expected.append(
+                        [os.path.basename(f.name), content.decode(),
+                         mimetypes.guess_type(f.name)[0]])
 
             actual = []
             # データをダウンロード
             for oid in inserted_oids:
-                content, file_name, mimetype = self.file_manager.file_download(oid)
-                actual.append([file_name, content.read().decode() , mimetype])
+                content, file_name, mimetype = self.file_manager.file_download(
+                    oid)
+                actual.append([file_name, content.read().decode(), mimetype])
                 # print(file_name, mimetype, content.read().decode())
 
             # テスト

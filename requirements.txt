@@ -17,7 +17,7 @@ jeepney==0.8.0
 jmespath==1.0.1
 keyring==23.13.1
 ldap3==2.9.1
-markdown-it-py==3.0.0
+markdown-it-py==2.2.0
 MarkupSafe==2.1.3
 mccabe==0.7.0
 mdurl==0.1.2

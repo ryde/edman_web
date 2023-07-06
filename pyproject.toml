@@ -18,12 +18,12 @@ classifiers = [
     "Topic :: Database :: Front-Ends",
 ]
 dependencies = [
-    "pymongo~=4.3.3",
-    "edman~=2023.5.24",
-    "Werkzeug~=2.3.4",
-    "Pillow~=9.5.0"
+    "pymongo~=4.4.0",
+    "edman~=2023.7.4",
+    "Werkzeug~=2.3.6",
+    "Pillow~=10.0.0"
 ]
-version = "2023.6.5"
+version = "2023.7.6"
 
 [project.urls]
 "documentation" = "https://ryde.github.io/edman_web/"

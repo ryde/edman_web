@@ -208,7 +208,7 @@ class FileManager(File):
             try:
                 # サムネイルを作成
                 image_data = self.generate_thumbnail(content_data, ext,
-                                                   thumbnail_size)
+                                                     thumbnail_size)
             except Exception:
                 raise
             else:

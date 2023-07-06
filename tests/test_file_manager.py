@@ -408,3 +408,7 @@ class TestSearchManager(TestCase):
             self.assertListEqual(expected, actual)
             # print(expected)
             # print(actual)
+
+    # def test__get_thumbnails_procedure(self):
+    #     # ラッパーなのでテストは割愛
+    #     pass

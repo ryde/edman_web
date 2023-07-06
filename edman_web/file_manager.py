@@ -185,3 +185,33 @@ class FileManager(File):
         except Exception:
             raise
         return outputfile
+
+    def get_thumbnails_procedure(self, files: list, thumbnail_suffix: list,
+                                 thumbnail_size=(100, 100)) -> dict:
+        """
+        データをDBから出してサムネイルを取得するラッパー
+
+        :param list files:
+        :param list thumbnail_suffix:
+        :param tuple thumbnail_size: default (100, 100)
+        :return:
+        :rtype: dict
+        """
+        thumbnails = {}
+        for oid, ext in self.extract_thumb_list(files, thumbnail_suffix):
+            # contentを取得
+            try:
+                content, file_name, mimetype = self.file_download(oid)
+                content_data = content.read()
+            except ValueError:
+                raise
+            try:
+                # サムネイルを作成
+                image_data = self.generate_thumbnail(content_data, ext,
+                                                   thumbnail_size)
+            except Exception:
+                raise
+            else:
+                thumbnails.update({oid: {'data': image_data, 'suffix': ext}})
+
+        return thumbnails

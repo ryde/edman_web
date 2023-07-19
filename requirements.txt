@@ -8,7 +8,7 @@ charset-normalizer==3.2.0
 cryptography==41.0.2
 dnspython==2.4.0
 docutils==0.20.1
-edman==2023.7.4
+edman==2023.7.19
 flake8==6.0.0
 h11==0.14.0
 httpcore==0.17.3

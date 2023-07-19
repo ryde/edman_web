@@ -31,6 +31,10 @@ Licence
 -------
 MIT
 
+PyPI Project
+------------
+https://pypi.org/project/edman_web/
+
 API Document
 ------------
 https://ryde.github.io/edman_web/

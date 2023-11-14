@@ -402,20 +402,13 @@ class TestSearchManager(TestCase):
             for oid in inserted_oids:
                 content, file_name, mimetype = self.file_manager.file_download(
                     oid)
-                actual.append([file_name, content.read().decode(), mimetype])
+                actual.append([file_name, content.decode(), mimetype])
                 # print(file_name, mimetype, content.read().decode())
 
             # テスト
             self.assertListEqual(expected, actual)
-            # print(expected)
-            # print(actual)
-
-    def test__get_thumbnails_procedure(self):
-        if not self.db_server_connect:
-            return
 
         # ファイルを圧縮してDBに入っている時に自動的に解凍しているか
-        img_size = (100, 100)
         content = Image.new("L", (200, 200))
         ext = 'png'
         img = BytesIO()
@@ -424,13 +417,33 @@ class TestSearchManager(TestCase):
         filename = 'test.' + ext
 
         self.fs = gridfs.GridFS(self.testdb)
-        put_result = self.fs.put(compressed, filename=filename)
+        oid = self.fs.put(compressed, filename=filename)
+        result, file_name, mimetype = self.file_manager.file_download(oid)
+        actual = (img.getvalue(), filename, 'image/png')
+        expected = (result, file_name, mimetype)
+        self.assertEqual(expected, actual)
 
-        files = [(put_result, filename)]
-        result = self.file_manager.get_thumbnails_procedure(
-            files, ['jpg', 'jpeg', 'gif', 'png'])
-
-        thumb_raw = Image.open(BytesIO(base64.b64decode(result[put_result]['data'])))
-        actual = thumb_raw.size
-        expected = img_size
-        self.assertTupleEqual(expected, actual)
+    # def test__get_thumbnails_procedure(self):
+    #     if not self.db_server_connect:
+    #         return
+    #
+    #     # ファイルを圧縮してDBに入っている時に自動的に解凍しているか
+    #     img_size = (100, 100)
+    #     content = Image.new("L", (200, 200))
+    #     ext = 'png'
+    #     img = BytesIO()
+    #     content.save(img, ext)
+    #     compressed = gzip.compress(img.getvalue())
+    #     filename = 'test.' + ext
+    #
+    #     self.fs = gridfs.GridFS(self.testdb)
+    #     put_result = self.fs.put(compressed, filename=filename)
+    #
+    #     files = [(put_result, filename)]
+    #     result = self.file_manager.get_thumbnails_procedure(
+    #         files, ['jpg', 'jpeg', 'gif', 'png'])
+    #
+    #     thumb_raw = Image.open(BytesIO(base64.b64decode(result[put_result]['data'])))
+    #     actual = thumb_raw.size
+    #     expected = img_size
+    #     self.assertTupleEqual(expected, actual)

@@ -80,7 +80,7 @@ class FileManager(File):
         return inserted
 
     def file_download(self, oid: Union[ObjectId, str]
-                      ) -> tuple[gridfs.grid_file.GridOut, str, Optional[str]]:
+                      ) -> tuple[bytes, str, Optional[str]]:
         """
         GridFsからファイルをダウンロードする
 
@@ -101,9 +101,18 @@ class FileManager(File):
             raise ValueError('ファイルが存在しません')
         except gridfs.errors.GridFSError:
             raise
+
+        try:
+            content_data = content.read()
+            # gzip圧縮されている場合は解凍する
+            if binascii.hexlify(content_data[:2]) == b'1f8b':
+                content_data = gzip.decompress(content_data)
+        except Exception:
+            raise
+
         file_name = content.filename
         mimetype = mimetypes.guess_type(file_name)[0]
-        return content, file_name, mimetype
+        return content_data, file_name, mimetype
 
     def file_delete(self, collection: str, oid: Union[str, ObjectId],
                     delete_list: List[str]):
@@ -205,18 +214,11 @@ class FileManager(File):
             # contentを取得
             try:
                 content, file_name, mimetype = self.file_download(oid)
-                content_data = content.read()
             except ValueError:
                 raise
             try:
-                # gzip圧縮されている場合は解凍する
-                if binascii.hexlify(content_data[:2]) == b'1f8b':
-                    content_data = gzip.decompress(content_data)
-            except Exception:
-                raise
-            try:
                 # サムネイルを作成
-                image_data = self.generate_thumbnail(content_data, ext,
+                image_data = self.generate_thumbnail(content, ext,
                                                      thumbnail_size)
             except Exception:
                 raise

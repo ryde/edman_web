@@ -1,5 +1,6 @@
 import base64
 import configparser
+import gzip
 import mimetypes
 import os
 import tempfile
@@ -7,7 +8,6 @@ from io import BytesIO
 from pathlib import Path
 from unittest import TestCase
 
-import gzip
 import gridfs
 from bson import DBRef, ObjectId
 from edman import DB, Config

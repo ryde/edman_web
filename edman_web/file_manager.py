@@ -1,4 +1,6 @@
 import base64
+import binascii
+import gzip
 import mimetypes
 import os
 from io import BytesIO
@@ -190,6 +192,7 @@ class FileManager(File):
                                  thumbnail_size=(100, 100)) -> dict:
         """
         データをDBから出してサムネイルを取得するラッパー
+        画像ファイルがgzip圧縮されている場合は解凍する
 
         :param list files:
         :param list thumbnail_suffix:
@@ -204,6 +207,12 @@ class FileManager(File):
                 content, file_name, mimetype = self.file_download(oid)
                 content_data = content.read()
             except ValueError:
+                raise
+            try:
+                # gzip圧縮されている場合は解凍する
+                if binascii.hexlify(content_data[:2]) == b'1f8b':
+                    content_data = gzip.decompress(content_data)
+            except Exception:
                 raise
             try:
                 # サムネイルを作成

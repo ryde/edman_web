@@ -353,7 +353,7 @@ class TestSearchManager(TestCase):
                 st = FileStorage(stream=BytesIO(content),
                                  filename=f.name)
             self.fs = gridfs.GridFS(self.testdb)
-            inserted = self.file_manager.web_grid_in(st, compress=False)
+            inserted = self.file_manager.web_grid_in(st)
             a = self.fs.get(inserted[0])
             actual = a.read().decode()
             expected = content.decode()

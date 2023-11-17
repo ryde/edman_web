@@ -21,14 +21,13 @@ class FileManager(File):
         super().__init__(db)
 
     def web_upload(self, collection: str, oid: Union[str, ObjectId],
-                   up_file: FileStorage, compress=False) -> None:
+                   up_file: FileStorage) -> None:
         """
         ファイルアップロード処理
 
         :param str collection:
         :param str or ObjectId oid:
         :param FileStorage up_file:
-        :param bool compress:
         :return:
         """
         oid = Utils.conv_objectid(oid)
@@ -39,7 +38,7 @@ class FileManager(File):
 
         try:
             # gridfsにファイルを入れる
-            inserted_file_oids = self.web_grid_in(up_file, compress)
+            inserted_file_oids = self.web_grid_in(up_file)
         except EdmanDbProcessError as e:
             raise e
         else:  # ドキュメントの更新
@@ -56,12 +55,11 @@ class FileManager(File):
                 self.fs_delete(inserted_file_oids)
                 raise EdmanDbProcessError(str(e))
 
-    def web_grid_in(self, file: FileStorage, compress: bool) -> list[Any]:
+    def web_grid_in(self, file: FileStorage) -> list[Any]:
         """
         Gridfsへデータをアップロード
 
         :param FileStorage file:
-        :param bool compress:
         :return: inserted
         :rtype: list
         """

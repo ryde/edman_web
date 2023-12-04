@@ -37,32 +37,7 @@ class SearchManager(Search):
 
         # 自分が所属するツリー全て
         elif dl_select == GetJsonStructure.all_doc.value:
-
             result = self.get_tree(collection_name, ObjectId(oid), exclusion)
-
-            # doc = self.db.doc(collection_name, ObjectId(oid), query=None,
-            #                   reference_delete=False)
-            #
-            # # 自分の所属するツリーのroot情報を取得
-            # if (
-            #         root_dbref := self.db.get_root_dbref(
-            #             doc)) is None:  # 自分自身がrootの場合
-            #     root_collection = collection_name
-            #     root_doc = doc
-            # else:
-            #     root_collection = root_dbref.collection
-            #     root_doc = self.connected_db[root_collection].find_one({
-            #         '_id': root_dbref.id
-            #     })
-            #
-            # # 自分と子要素をマージ
-            # root_doc.update(
-            #     self.db.get_child_all({root_collection: root_doc}))
-            #
-            # # リファレンス削除や日時変換
-            # result = self.process_data_derived_from_mongodb(
-            #     {root_collection: root_doc}, exclusion=exclusion)
-
         else:
             # 単一のドキュメント
             result = self.find(collection_name, {'_id': ObjectId(oid)},

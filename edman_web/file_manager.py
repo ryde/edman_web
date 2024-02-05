@@ -199,7 +199,7 @@ class FileManager(File):
                                  thumbnail_size=(100, 100)) -> dict:
         """
         データをDBから出してサムネイルを取得するラッパー
-        画像ファイルがgzip圧縮されている場合は解凍する
+        画像を文字列データとして取得
 
         :param list files:
         :param list thumbnail_suffix:
@@ -211,7 +211,7 @@ class FileManager(File):
         for oid, ext in self.extract_thumb_list(files, thumbnail_suffix):
             # contentを取得
             try:
-                content, file_name, mimetype = self.file_download(oid)
+                content, _, _ = self.file_download(oid)
             except ValueError:
                 raise
             try:
@@ -224,3 +224,32 @@ class FileManager(File):
                 thumbnails.update({oid: {'data': image_data, 'suffix': ext}})
 
         return thumbnails
+
+
+    def get_images_procedure(self, files: list, suffix: list,
+                             file_decode='utf-8') -> dict:
+        """
+        データをDBから取り出す取得するラッパー
+        文字列データとして取得
+
+        :param list files:
+        :param list suffix:
+        :param str file_decode: default 'utf-8'
+        :return:
+        :rtype: dict
+        """
+        result = {}
+        for oid, ext in self.extract_thumb_list(files, suffix):
+            # contentを取得
+            try:
+                content, _, _ = self.file_download(oid)
+            except ValueError:
+                raise
+            try:
+                image_data = base64.b64encode(content).decode(file_decode)
+            except Exception:
+                raise
+            else:
+                result.update({oid: {'data': image_data, 'suffix': ext}})
+
+        return result

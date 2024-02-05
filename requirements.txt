@@ -16,7 +16,7 @@ jeepney==0.8.0
 jmespath==1.0.1
 keyring==24.3.0
 markdown-it-py==3.0.0
-MarkupSafe==2.1.4
+MarkupSafe==2.1.5
 mccabe==0.7.0
 mdurl==0.1.2
 more-itertools==10.2.0

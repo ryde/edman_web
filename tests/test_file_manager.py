@@ -461,3 +461,27 @@ class TestSearchManager(TestCase):
         actual = thumb_raw.size
         expected = img_size
         self.assertTupleEqual(expected, actual)
+
+    def test__get_images_procedure(self):
+        if not self.db_server_connect:
+            return
+
+        img_size = (200, 200)
+        content = Image.new("L", (200, 200))
+        ext = 'png'
+        img = BytesIO()
+        content.save(img, ext)
+        compressed = gzip.compress(img.getvalue())
+        filename = 'test.' + ext
+
+        self.fs = gridfs.GridFS(self.testdb)
+        put_result = self.fs.put(compressed, filename=filename)
+
+        files = [(put_result, filename)]
+        result = self.file_manager.get_images_procedure(
+            files, ['jpg', 'jpeg', 'gif', 'png'])
+
+        thumb_raw = Image.open(BytesIO(base64.b64decode(result[put_result]['data'])))
+        actual = thumb_raw.size
+        expected = img_size
+        self.assertTupleEqual(expected, actual)

@@ -49,7 +49,8 @@ class FileManager(File):
                 if replace_result.modified_count != 1:
                     # ドキュメントが更新されていない場合はgridfsからデータを削除する
                     self.fs_delete(inserted_file_oids)
-                    raise EdmanDbProcessError('ドキュメントの更新ができませんでした.')
+                    raise EdmanDbProcessError(
+                        'ドキュメントの更新ができませんでした.')
             except Exception as e:
                 # 途中で例外が起きた場合、gridfsからデータを削除する
                 self.fs_delete(inserted_file_oids)
@@ -68,7 +69,8 @@ class FileManager(File):
             f = file.stream.read()
             metadata = {'filename': file.filename}
         except OSError:
-            raise EdmanDbProcessError('DBにファイルをアップロード出来ませんでした')
+            raise EdmanDbProcessError(
+                'DBにファイルをアップロード出来ませんでした')
         except Exception:
             raise
         try:
@@ -224,7 +226,6 @@ class FileManager(File):
                 thumbnails.update({oid: {'data': image_data, 'suffix': ext}})
 
         return thumbnails
-
 
     def get_images_procedure(self, files: list, suffix: list,
                              file_decode='utf-8') -> dict:

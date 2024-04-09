@@ -46,5 +46,5 @@ Author
 
 [yuskyamada](https://github.com/yuskyamada)
 
-.. |py_version| image:: https://img.shields.io/badge/python-3.11-blue.svg
+.. |py_version| image:: https://img.shields.io/badge/python-3.12-blue.svg
     :alt: Use python

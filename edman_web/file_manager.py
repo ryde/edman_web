@@ -232,7 +232,8 @@ class FileManager(File):
         return outputfile
 
     def get_thumbnails_procedure(self, files: list, thumbnail_suffix: list,
-                                 thumbnail_size=(100, 100), method="pillow") -> dict:
+                                 thumbnail_size=(100, 100),
+                                 method="pillow") -> dict:
         """
         データをDBから出してサムネイルを取得するラッパー
         画像を文字列データとして取得
@@ -255,7 +256,7 @@ class FileManager(File):
                 if method == 'opencv':
                     # サムネイルを作成(jpgのみ)
                     image_data = self.generate_thumbnail2(content, ext,
-                                                         thumbnail_size)
+                                                          thumbnail_size)
 
                 else:
                     # サムネイルを作成

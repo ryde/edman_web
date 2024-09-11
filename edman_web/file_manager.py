@@ -8,6 +8,7 @@ from typing import Any, List, Optional, Tuple, Union
 
 import cv2
 import gridfs
+import imutils
 import numpy as np
 from bson import ObjectId
 from edman import Config, File
@@ -202,7 +203,7 @@ class FileManager(File):
     @staticmethod
     def generate_thumbnail2(content: bytes, ext: str,
                             thumbnail_size: tuple[int, int],
-                            file_decode='utf-8') -> str:
+                            file_decode='utf-8', quality=70) -> str:
         """
         サムネイル画像をbase64で作成
         ndとopen cvを利用
@@ -211,17 +212,21 @@ class FileManager(File):
         :param str ext:
         :param tuple thumbnail_size:
         :param str file_decode: default 'utf-8'
+        :param int quality: default 70, jpeg quality
         :return:
         :rtype: str
         """
         try:
             arr = np.frombuffer(content, dtype=np.uint8)
             img = cv2.imdecode(arr, flags=cv2.IMREAD_COLOR)
-            resize_result = cv2.resize(img, thumbnail_size)
+            resize_result = imutils.resize(img, thumbnail_size[1])
+            # resize_result = cv2.resize(img, thumbnail_size)
             if not ext.startswith('.'):
                 ext = '.' + ext
             ret, encoded_img = cv2.imencode(
-                ext, resize_result, (cv2.IMWRITE_JPEG_QUALITY, 10))
+                ext,
+                resize_result,
+                (cv2.IMWRITE_JPEG_QUALITY, quality))
 
         except (IOError, KeyError) as e:
             raise EdmanInternalError(f'サムネイルが生成できませんでした {e}')
@@ -233,15 +238,16 @@ class FileManager(File):
 
     def get_thumbnails_procedure(self, files: list, thumbnail_suffix: list,
                                  thumbnail_size=(100, 100),
-                                 method="pillow") -> dict:
+                                 method="pillow", quality=70) -> dict:
         """
         データをDBから出してサムネイルを取得するラッパー
         画像を文字列データとして取得
 
         :param list files:
         :param list thumbnail_suffix:
-        :param tuple thumbnail_size: default (100, 100)
+        :param tuple[int, int] thumbnail_size: default (100, 100)
         :param str method: default pillow, opencv(jpeg only)
+        :param int quality: default 70, jpeg quality
         :return:
         :rtype: dict
         """
@@ -256,7 +262,8 @@ class FileManager(File):
                 if method == 'opencv':
                     # サムネイルを作成(jpgのみ)
                     image_data = self.generate_thumbnail2(content, ext,
-                                                          thumbnail_size)
+                                                          thumbnail_size,
+                                                          quality=quality)
 
                 else:
                     # サムネイルを作成

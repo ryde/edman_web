@@ -179,7 +179,7 @@ class TestSearchManager(TestCase):
                                                       thumbnail_size=img_size)
         thumb_raw = Image.open(BytesIO(base64.b64decode(result)))
         actual = thumb_raw.size
-        expected = img_size
+        expected = (100, 75)
         self.assertTupleEqual(expected, actual)
 
     def test_file_delete(self):

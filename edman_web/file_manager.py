@@ -218,6 +218,8 @@ class FileManager(File):
             arr = np.frombuffer(content, dtype=np.uint8)
             img = cv2.imdecode(arr, flags=cv2.IMREAD_COLOR)
             resize_result = cv2.resize(img, thumbnail_size)
+            if not ext.startswith('.'):
+                ext = '.' + ext
             ret, encoded_img = cv2.imencode(
                 ext, resize_result, (cv2.IMWRITE_JPEG_QUALITY, 10))
 
@@ -230,7 +232,7 @@ class FileManager(File):
         return outputfile
 
     def get_thumbnails_procedure(self, files: list, thumbnail_suffix: list,
-                                 thumbnail_size=(100, 100)) -> dict:
+                                 thumbnail_size=(100, 100), method="pillow") -> dict:
         """
         データをDBから出してサムネイルを取得するラッパー
         画像を文字列データとして取得
@@ -238,6 +240,7 @@ class FileManager(File):
         :param list files:
         :param list thumbnail_suffix:
         :param tuple thumbnail_size: default (100, 100)
+        :param str method: default pillow, opencv(jpeg only)
         :return:
         :rtype: dict
         """
@@ -249,9 +252,15 @@ class FileManager(File):
             except ValueError:
                 raise
             try:
-                # サムネイルを作成
-                image_data = self.generate_thumbnail(content, ext,
-                                                     thumbnail_size)
+                if method == 'opencv':
+                    # サムネイルを作成(jpgのみ)
+                    image_data = self.generate_thumbnail2(content, ext,
+                                                         thumbnail_size)
+
+                else:
+                    # サムネイルを作成
+                    image_data = self.generate_thumbnail(content, ext,
+                                                         thumbnail_size)
             except Exception:
                 raise
             else:

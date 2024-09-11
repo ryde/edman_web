@@ -21,9 +21,11 @@ dependencies = [
     "pymongo~=4.8.0",
     "edman~=2024.8.21",
     "Werkzeug~=3.0.4",
-    "Pillow~=10.4.0"
+    "Pillow~=10.4.0",
+    "numpy~=2.1.1",
+    "opencv-python~=4.10.0.84"
 ]
-version = "2024.8.22"
+version = "2024.9.11"
 
 [project.urls]
 "documentation" = "https://ryde.github.io/edman_web/"

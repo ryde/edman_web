@@ -41,3 +41,8 @@ edman_web = ["py.typed"]
 [tool.pytest.ini_options]
 addopts = "-p no:cacheprovider"
 testpaths = ["tests"]
+
+[tool.mypy]
+[[tool.mypy.overrides]]
+module = "imutils"
+ignore_missing_imports = true

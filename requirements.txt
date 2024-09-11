@@ -11,6 +11,8 @@ edman==2024.8.21
 flake8==7.1.1
 idna==3.8
 importlib_metadata==8.4.0
+imutils==0.5.4
+iniconfig==2.0.0
 isort==5.13.2
 jaraco.classes==3.4.0
 jaraco.context==6.0.1
@@ -31,12 +33,14 @@ opencv-python==4.10.0.84
 packaging==24.1
 pillow==10.4.0
 pkginfo==1.11.1
+pluggy==1.5.0
 pycodestyle==2.12.1
 pycparser==2.22
 pyflakes==3.2.0
 Pygments==2.18.0
 pymongo==4.8.0
 pyproject_hooks==1.1.0
+pytest==8.3.3
 python-dateutil==2.9.0.post0
 readme_renderer==44.0
 requests==2.32.3

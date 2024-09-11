@@ -166,6 +166,23 @@ class TestSearchManager(TestCase):
         expected = img_size
         self.assertTupleEqual(expected, actual)
 
+    def test_generate_thumbnail2(self):
+        if not self.db_server_connect:
+            return
+
+        # 正常系
+        img_size = (100, 100)
+        content = Image.new("L", (200, 200))
+        ext = 'png'
+        img = BytesIO()
+        content.save(img, ext)
+        result = self.file_manager.generate_thumbnail2(img.getvalue(), ext,
+                                                      thumbnail_size=img_size)
+        thumb_raw = Image.open(BytesIO(base64.b64decode(result)))
+        actual = thumb_raw.size
+        expected = img_size
+        self.assertTupleEqual(expected, actual)
+
     def test_file_delete(self):
         if not self.db_server_connect:
             return

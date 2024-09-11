@@ -6,7 +6,9 @@ import os
 from io import BytesIO
 from typing import Any, List, Optional, Tuple, Union
 
+import cv2
 import gridfs
+import numpy as np
 from bson import ObjectId
 from edman import Config, File
 from edman.exceptions import EdmanDbProcessError, EdmanInternalError
@@ -193,6 +195,36 @@ class FileManager(File):
         try:
             outputfile = base64.b64encode(thumbnail.getvalue()).decode(
                 file_decode)
+        except Exception:
+            raise
+        return outputfile
+
+    @staticmethod
+    def generate_thumbnail2(content: bytes, ext: str,
+                            thumbnail_size: tuple[int, int],
+                            file_decode='utf-8') -> str:
+        """
+        サムネイル画像をbase64で作成
+        ndとopen cvを利用
+
+        :param bytes content:
+        :param str ext:
+        :param tuple thumbnail_size:
+        :param str file_decode: default 'utf-8'
+        :return:
+        :rtype: str
+        """
+        try:
+            arr = np.frombuffer(content, dtype=np.uint8)
+            img = cv2.imdecode(arr, flags=cv2.IMREAD_COLOR)
+            resize_result = cv2.resize(img, thumbnail_size)
+            ret, encoded_img = cv2.imencode(
+                ext, resize_result, (cv2.IMWRITE_JPEG_QUALITY, 10))
+
+        except (IOError, KeyError) as e:
+            raise EdmanInternalError(f'サムネイルが生成できませんでした {e}')
+        try:
+            outputfile = base64.b64encode(encoded_img).decode(file_decode)
         except Exception:
             raise
         return outputfile

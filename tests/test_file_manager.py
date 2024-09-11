@@ -172,11 +172,10 @@ class TestSearchManager(TestCase):
 
         # 正常系
         img_size = (100, 100)
-        content = Image.new("L", (200, 200))
-        ext = 'png'
+        content = Image.new("RGB", (320, 240), (0, 128, 255))
         img = BytesIO()
-        content.save(img, ext)
-        result = self.file_manager.generate_thumbnail2(img.getvalue(), ext,
+        content.save(img, 'jpeg')
+        result = self.file_manager.generate_thumbnail2(img.getvalue(), '.jpg',
                                                       thumbnail_size=img_size)
         thumb_raw = Image.open(BytesIO(base64.b64decode(result)))
         actual = thumb_raw.size

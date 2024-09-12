@@ -4,6 +4,7 @@ import gzip
 import mimetypes
 import os
 import tempfile
+import time
 from io import BytesIO
 # from logging import getLogger,  FileHandler, ERROR
 from logging import ERROR, StreamHandler, getLogger
@@ -154,16 +155,20 @@ class TestSearchManager(TestCase):
             return
 
         # 正常系
-        img_size = (100, 100)
-        content = Image.new("L", (200, 200))
-        ext = 'png'
+        img_size = (100, 75)
+        # content = Image.new("L", (200, 200))
+        content = Image.new("RGB", (12800, 9600), (0, 128, 255))
+        ext = 'jpg'
         img = BytesIO()
-        content.save(img, ext)
+        content.save(img, 'jpeg')
+        start = time.time()
         result = self.file_manager.generate_thumbnail(img.getvalue(), ext,
                                                       thumbnail_size=img_size)
+        end = time.time()
         thumb_raw = Image.open(BytesIO(base64.b64decode(result)))
         actual = thumb_raw.size
         expected = img_size
+        print('test1: ', end - start)
         self.assertTupleEqual(expected, actual)
 
     def test_generate_thumbnail2(self):
@@ -172,14 +177,36 @@ class TestSearchManager(TestCase):
 
         # 正常系
         img_size = (100, 100)
-        content = Image.new("RGB", (320, 240), (0, 128, 255))
+        content = Image.new("RGB", (12800, 9600), (0, 128, 255))
         img = BytesIO()
         content.save(img, 'jpeg')
+        start = time.time()
         result = self.file_manager.generate_thumbnail2(img.getvalue(), 'jpg',
-                                                      thumbnail_size=img_size)
+                                                       thumbnail_size=img_size)
+        end = time.time()
         thumb_raw = Image.open(BytesIO(base64.b64decode(result)))
         actual = thumb_raw.size
         expected = (100, 75)
+        print('test2: ', end - start)
+        self.assertTupleEqual(expected, actual)
+
+    def test_generate_thumbnail3(self):
+        if not self.db_server_connect:
+            return
+
+        # 正常系
+        img_size = (100, 100)
+        content = Image.new("RGB", (12800, 9600), (0, 128, 255))
+        img = BytesIO()
+        content.save(img, 'jpeg')
+        start = time.time()
+        result = self.file_manager.generate_thumbnail3(img.getvalue(), 'jpg',
+                                                       thumbnail_size=img_size)
+        end = time.time()
+        thumb_raw = Image.open(BytesIO(base64.b64decode(result)))
+        actual = thumb_raw.size
+        expected = (100, 75)
+        print('test3: ', end - start)
         self.assertTupleEqual(expected, actual)
 
     def test_file_delete(self):
@@ -473,7 +500,8 @@ class TestSearchManager(TestCase):
         result = self.file_manager.get_thumbnails_procedure(
             files, ['jpg', 'jpeg', 'gif', 'png'])
 
-        thumb_raw = Image.open(BytesIO(base64.b64decode(result[put_result]['data'])))
+        thumb_raw = Image.open(
+            BytesIO(base64.b64decode(result[put_result]['data'])))
         actual = thumb_raw.size
         expected = img_size
         self.assertTupleEqual(expected, actual)
@@ -497,7 +525,8 @@ class TestSearchManager(TestCase):
         result = self.file_manager.get_images_procedure(
             files, ['jpg', 'jpeg', 'gif', 'png'])
 
-        thumb_raw = Image.open(BytesIO(base64.b64decode(result[put_result]['data'])))
+        thumb_raw = Image.open(
+            BytesIO(base64.b64decode(result[put_result]['data'])))
         actual = thumb_raw.size
         expected = img_size
         self.assertTupleEqual(expected, actual)

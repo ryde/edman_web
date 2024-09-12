@@ -187,7 +187,8 @@ class FileManager(File):
         """
         try:
             img = PILImage.open(BytesIO(content))
-            img.thumbnail(size=thumbnail_size, resample=PILImage.LANCZOS)
+            # img.thumbnail(size=thumbnail_size, resample=PILImage.LANCZOS)
+            img.thumbnail(size=thumbnail_size, resample=PILImage.NEAREST)
             thumbnail = BytesIO()
             # jpgという拡張子は利用できないので変換する
             img.save(thumbnail, 'jpeg' if ext == 'jpg' else ext)
@@ -220,14 +221,47 @@ class FileManager(File):
             arr = np.frombuffer(content, dtype=np.uint8)
             img = cv2.imdecode(arr, flags=cv2.IMREAD_COLOR)
             resize_result = imutils.resize(img, thumbnail_size[1])
-            # resize_result = cv2.resize(img, thumbnail_size)
             if not ext.startswith('.'):
                 ext = '.' + ext
             ret, encoded_img = cv2.imencode(
                 ext,
                 resize_result,
                 (cv2.IMWRITE_JPEG_QUALITY, quality))
+        except (IOError, KeyError) as e:
+            raise EdmanInternalError(f'サムネイルが生成できませんでした {e}')
+        try:
+            outputfile = base64.b64encode(encoded_img).decode(file_decode)
+        except Exception:
+            raise
+        return outputfile
 
+    @staticmethod
+    def generate_thumbnail3(content: bytes, ext: str,
+                            thumbnail_size: tuple[int, int],
+                            file_decode='utf-8', quality=70) -> str:
+        """
+        サムネイル画像をbase64で作成
+        ndとopen cvとimutilsを利用
+
+        :param bytes content:
+        :param str ext:
+        :param tuple thumbnail_size:
+        :param str file_decode: default 'utf-8'
+        :param int quality: default 70, jpeg quality
+        :return:
+        :rtype: str
+        """
+
+        try:
+            c = PILImage.open(BytesIO(content))
+            arr = np.array(c)
+            resize_result = imutils.resize(arr, thumbnail_size[1])
+            if not ext.startswith('.'):
+                ext = '.' + ext
+            ret, encoded_img = cv2.imencode(
+                ext,
+                resize_result,
+                (cv2.IMWRITE_JPEG_QUALITY, quality))
         except (IOError, KeyError) as e:
             raise EdmanInternalError(f'サムネイルが生成できませんでした {e}')
         try:

@@ -26,7 +26,7 @@ dependencies = [
     "opencv-python~=4.10.0.84",
     "imutils~=0.5.4"
 ]
-version = "2024.9.11.2"
+version = "2024.9.12"
 
 [project.urls]
 "documentation" = "https://ryde.github.io/edman_web/"

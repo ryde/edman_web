@@ -18,15 +18,15 @@ classifiers = [
     "Topic :: Database :: Front-Ends",
 ]
 dependencies = [
-    "pymongo~=4.10.1",
-    "edman~=2024.11.5",
-    "Werkzeug~=3.1.2",
-    "Pillow~=11.0.0",
-    "numpy~=2.1.3",
-    "opencv-python~=4.10.0.84",
+    "pymongo~=4.11",
+    "edman~=2025.1.31",
+    "Werkzeug~=3.1.3",
+    "Pillow~=11.1.0",
+    "numpy~=2.2.2",
+    "opencv-python~=4.11.0.86",
     "imutils~=0.5.4"
 ]
-version = "2024.11.5"
+version = "2025.1.31"
 
 [project.urls]
 "documentation" = "https://ryde.github.io/edman_web/"

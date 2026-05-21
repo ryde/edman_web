@@ -58,8 +58,8 @@ jobs:
       - run: |
           cd ./api_docs
           make html
-
-      - uses: actions/upload-pages-artifact@v1
+      # Equivalent to 'upload-pages-artifact@v5'
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
         with:
           path: ./api_docs/_build/html
 

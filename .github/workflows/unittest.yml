@@ -12,11 +12,13 @@ jobs:
         mongodb-version: [ '7.0' ]
 
     steps:
+      # Equivalent to 'actions/checkout@v6.0.2'
       - name: setup
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
+      # Equivalent to 'actions/setup-python@v6.2.0'
       - name: setup python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: '3.12'
           check-latest: true
@@ -27,8 +29,9 @@ jobs:
       - run:  pip install -r ./requirements.txt
       - run:  cp ./tests/ini/test_db.ini.sample ./tests/ini/test_db.ini
 
+      # Equivalent to 'actions/setup-python@1.12.1'
       - name: setup DB
-        uses: supercharge/mongodb-github-action@1.11.0
+        uses: supercharge/mongodb-github-action@315db7fe45ac2880b7758f1933e6e5d59afd5e94
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
           mongodb-username: admin
@@ -55,7 +58,23 @@ jobs:
       - run: |
           cd ./api_docs
           make html
-      - uses: peaceiris/actions-gh-pages@v4
+
+      - uses: actions/upload-pages-artifact@v1
         with:
-          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_dir: ./api_docs/_build/html
+          path: ./api_docs/_build/html
+
+  deploy:
+    needs: edman_unittest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      # Equivalent to 'actions/deploy-pages@v5'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128
+

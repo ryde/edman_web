@@ -1,0 +1,52 @@
+name: edman_web Github Pages Deploy
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  pages-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Equivalent to 'actions/checkout@v6.0.2'
+      - name: setup
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      # Equivalent to 'actions/setup-python@v6.2.0'
+      - name: setup python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.12'
+          check-latest: true
+      - run: python -m venv venv
+      - run: source ./venv/bin/activate
+      - run: pip install -U pip setuptools
+      - run: pip install sphinx
+
+      - name: API doc output and push gh-pages
+        run: |
+          mkdir ./api_docs
+          sphinx-apidoc -F -o ./api_docs ./edman_web/
+      - run: |
+          cd ./api_docs
+          make html
+      # Equivalent to 'upload-pages-artifact@v5'
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
+        with:
+          path: ./api_docs/_build/html
+
+  deploy:
+    needs: pages-deploy
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      # Equivalent to 'actions/deploy-pages@v5'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128
+
